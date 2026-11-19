@@ -1,4 +1,8 @@
+//go:build darwin
+
 package update
+
+import "golang.org/x/sys/unix"
 
 func readOnly(path string) bool {
 	var st unix.Statfs_t
