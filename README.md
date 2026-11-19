@@ -76,9 +76,24 @@ The old provider list: one row per key/account, keeping the entry-code and key c
 
 Live in-flight requests plus the full log (no longer only the first 10 rows). Open a row to see the whole attempt chain: why each entry failed, which one it was on, which one answered. Concurrent requests heard at the same instant keep a stable order, and the day's log survives a restart.
 
+## Downloads
+
+Prebuilt binaries are attached to [Releases](https://github.com/hepeidong1/magpie-local/releases).
+
+| Platform | File | Notes |
+| :-- | :-- | :-- |
+| Windows x64 (desktop) | `magpie-local-windows-amd64.exe` | GUI, no console window |
+| Windows arm64 (desktop) | `magpie-local-windows-arm64.exe` | GUI, no console window |
+| Windows x64 / arm64 (CLI) | `magpie-local-cli-windows-amd64.exe` / `magpie-local-cli-windows-arm64.exe` | terminal only |
+| macOS arm64 / x64 (CLI) | `magpie-local-cli-darwin-arm64` / `magpie-local-cli-darwin-amd64` | `chmod +x` first |
+| Linux x64 / arm64 (CLI) | `magpie-local-cli-linux-amd64` / `magpie-local-cli-linux-arm64` | `chmod +x` first |
+| Android / Termux arm64 (CLI) | `magpie-local-cli-android-arm64` | `chmod +x` first |
+
+`SHA256SUMS.txt` lists every file's checksum (`sha256sum -c SHA256SUMS.txt`). The desktop app is currently built for Windows only; on other platforms use the CLI (or build the GUI yourself).
+
 ## Quick start
 
-**1 · Run.** Unzip anywhere and double-click `magpie-local.exe` (Windows 10/11 x64, GUI subsystem, no console window). Portable: configuration lives in `data/` next to the exe.
+**1 · Run.** Download `magpie-local-windows-amd64.exe` (or the arm64 build) from Releases and double-click it (Windows 10/11, GUI subsystem, no console window). Portable: configuration lives in `data/` next to the exe.
 
 **2 · Add a provider.** Open **供应商登录** (Provider logins), pick a preset or enter an OpenAI-compatible base URL, and paste an API key.
 
@@ -132,7 +147,7 @@ The repo's `make build` / `make test` work too.
 
 - This package contains **no** `data/`, keys, accounts, logs, caches or installed third-party plugins.
 - After running it, never upload or commit `data/` (especially `providers.json`, `caller-keys.json`, `logins.json`).
-- For GitHub, attach `magpie-local.exe` to a **Release** rather than committing it (77 MB; binaries make a repo heavy; `.gitignore` already ignores it).
+- For GitHub, attach the binaries to a **Release** rather than committing them (binaries make a repo heavy; `.gitignore` already ignores them).
 
 ## Known limitations
 

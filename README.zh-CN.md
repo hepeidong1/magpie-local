@@ -76,9 +76,24 @@ models.dev 给某个模型 id 的窗口，可能属于**另一个部署**。比�
 
 实时在途请求 + 完整日志（不再只显示 10 条）。点开一行，展开整条尝试链：每个条目为什么失败、轮到哪一条、哪一条答了。同一时刻的并发请求顺序稳定，当日日志跨重启保留。
 
+## 下载
+
+预编译二进制都在 [Releases](https://github.com/hepeidong1/magpie-local/releases)。
+
+| 平台 | 文件 | 说明 |
+| :-- | :-- | :-- |
+| Windows x64（桌面） | `magpie-local-windows-amd64.exe` | GUI，无命令行窗口 |
+| Windows arm64（桌面） | `magpie-local-windows-arm64.exe` | GUI，无命令行窗口 |
+| Windows x64 / arm64（CLI） | `magpie-local-cli-windows-amd64.exe` / `magpie-local-cli-windows-arm64.exe` | 仅终端 |
+| macOS arm64 / x64（CLI） | `magpie-local-cli-darwin-arm64` / `magpie-local-cli-darwin-amd64` | 先 `chmod +x` |
+| Linux x64 / arm64（CLI） | `magpie-local-cli-linux-amd64` / `magpie-local-cli-linux-arm64` | 先 `chmod +x` |
+| Android / Termux arm64（CLI） | `magpie-local-cli-android-arm64` | 先 `chmod +x` |
+
+`SHA256SUMS.txt` 是全部文件的校验和（`sha256sum -c SHA256SUMS.txt`）。桌面版目前只构建 Windows；其他平台用 CLI，或自行构建 GUI。
+
 ## 快速开始
 
-**1 · 运行。** 解压到任意目录，双击 `magpie-local.exe`（Windows 10/11 x64，GUI 子系统，无命令行窗口）。便携模式：配置写在同目录的 `data/`。
+**1 · 运行。** 从 Releases 下载 `magpie-local-windows-amd64.exe`（或 arm64 版），双击运行（Windows 10/11，GUI 子系统，无命令行窗口）。便携模式：配置写在同目录的 `data/`。
 
 **2 · 加供应商。** 打开 **供应商登录**，选预设或填一个 OpenAI-compatible 地址，粘贴 API Key。
 
@@ -132,7 +147,7 @@ GOOS=windows go vet ./...
 
 - 这个包**不含** `data/`、密钥、账号、日志、缓存或任何已安装的第三方插件。
 - 运行后请勿把 `data/`（尤其 `providers.json`、`caller-keys.json`、`logins.json`）上传或提交。
-- 传到 GitHub 时，建议把 `magpie-local.exe` 作为 **Release 附件**，不要提交进仓库（77 MB，二进制进 Git 会让仓库很重；`.gitignore` 已忽略它）。
+- 传到 GitHub 时，把二进制作为 **Release 附件**，不要提交进仓库（二进制进 Git 会让仓库很重；`.gitignore` 已忽略它们）。
 
 ## 已知限制
 
