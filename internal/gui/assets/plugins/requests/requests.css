@@ -1,0 +1,182 @@
+/* The Requests page (plugins/requests): the requests out at the vendors
+   right now, one per row, and under them the log of the calls done,
+   newest first. Both tables share the row chrome; each has its own
+   column template. Everything reads centered and compact. */
+
+.req-card {
+  min-width: 0; max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+.req-card::-webkit-scrollbar { height: 9px; }
+.req-card::-webkit-scrollbar-thumb { background: var(--faint); border: 2px solid transparent; border-radius: 9px; background-clip: padding-box; }
+
+.req-grid { min-width: 0; }
+.req-row {
+  display: grid;
+  align-items: center;
+  height: 24px;
+  border-bottom: 1px solid var(--line-2);
+}
+.req-row:last-child { border-bottom: 0; }
+.req-row:not(.head):hover { background: var(--pill); }
+.req-row.head {
+  height: 26px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+.req-cell {
+  min-width: 0; padding: 0 4px;
+  font-size: 11px; color: var(--fg); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.req-row.head .req-cell {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+}
+.req-row.req-empty .req-cell { color: var(--faint); }
+
+/* 在途表：收到 / Agent / Key / 请求模型 / 应答识别码 / 应答供应商 /
+   应答模型 / 并发(彩色块) / 响应时间 —— 两列弹性，其余定宽，全部居中 */
+/* 请求日志：时间 / Agent / 应答供应商 / 应答模型 / 状态 /
+   输入 / 输出 / 缓存 / 首字 / 总耗时 / 速度 */
+#reqLog { flex: 1 1 auto; min-height: 120px; overflow-y: auto; overflow-x: auto; }
+/* 日志表格的样式在 app.css 的 .led（原版账本的全局样式）里；列居中 */
+#reqLog > table.led > thead > tr > th, #reqLog > table.led > tbody > tr > td { text-align: center; }
+
+/* 应答供应商格：头像 + 名字 */
+.req-prov { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; }
+.req-prov .ic { width: 14px; height: 14px; flex: none; }
+.req-prov span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* —— 请求列表：所有列居中，Key 列窄（名字最多 3 个字）——
+   回答中的行：橙色旋转虚线环跟在状态文字前 */
+#reqLog > table.led { border-collapse: collapse; width: 100%; }
+#reqLog > table.led > thead > tr > th,
+#reqLog > table.led > tbody > tr > td {
+  text-align: center;
+  padding: 2px 5px;
+  font-size: 11px;
+}
+#reqLog > table.led > thead > tr > th {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+}
+#reqLog > table.led > tbody > tr { border-top: 1px solid var(--line-2); font-variant-numeric: tabular-nums; }
+#reqLog > table.led td.key { max-width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#reqLog > table.led td.when { color: var(--muted); }
+
+/* 展开按钮：单元格小 */
+#reqLog .req-open-cell { padding: 0 4px !important; }
+#reqLog .req-open {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; padding: 0; border: 0; border-radius: 5px;
+  background: none; color: var(--muted); cursor: pointer;
+  transition: transform .15s var(--ease), background .15s;
+}
+#reqLog .req-open:hover { background: var(--pill-hover); color: var(--fg); }
+#reqLog .req-open.open { transform: rotate(180deg); }
+
+/* 请求行状态点：回答中的点转圈 */
+#reqLog .led-row .st { display: inline-flex; align-items: center; gap: 5px; }
+#reqLog .led-row .st i.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+#reqLog .led-row .st.st-waiting i.dot {
+  background: transparent; border: 2px dashed var(--amber);
+  border-radius: 50%; box-sizing: border-box;
+  animation: reqspin .8s linear infinite;
+}
+#reqLog .led-row .st.st-fail i.dot { background: var(--red); }
+#reqLog .led-row .st.st-ok i.dot { background: var(--green); }
+@keyframes reqspin { to { transform: rotate(360deg); } }
+#reqLog .led-row.req-waiting { background: color-mix(in srgb, var(--amber) 6%, transparent); }
+#reqLog .led-row.req-fail { background: color-mix(in srgb, var(--red) 6%, transparent); }
+#reqLog .led-row.req-clickable { cursor: pointer; }
+
+/* —— 展开后的条目流（紧凑的一段，不是表格，也不是一行一条）——
+   条目一个接一个地流动排布：序号徽标（失败红底白字 / 成功绿底白字 /
+   未轮到或跳过灰底黑字黑框）[图标]供应商 模型（灰字） 原因 */
+#reqLog tr.req-path-open > td { padding: 4px 10px 6px 14px; background: var(--card-2); }
+#reqLog .req-flow {
+  font-size: 11px; line-height: 1.75;
+  display: flex; flex-wrap: wrap;
+  gap: 2px 14px;
+}
+#reqLog .req-flow-item {
+  display: inline-flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+#reqLog .req-no {
+  flex: none;
+  display: inline-block; min-width: 15px; padding: 0 3px;
+  border-radius: 2px; text-align: center;
+  font-weight: 600; font-size: 9px; line-height: 13px;
+}
+#reqLog .req-flow-ok .req-no { background: var(--green); color: #fff; }
+#reqLog .req-flow-fail .req-no { background: var(--red); color: #fff; }
+#reqLog .req-flow-pending .req-no,
+#reqLog .req-flow-skip .req-no {
+  background: var(--line-2); color: var(--fg); border: 1px solid var(--fg);
+}
+#reqLog .req-flow-waiting .req-no { background: var(--amber); color: #fff; }
+#reqLog .req-ref { color: var(--muted); display: inline-flex; align-items: center; gap: 4px; }
+#reqLog .req-ref .ic { width: 12px; height: 12px; flex: none; }
+#reqLog .req-why { color: var(--fg); }
+#reqLog .req-why-ok { color: var(--green); }
+#reqLog .req-why-fail { color: var(--red); }
+#reqLog .req-why-waiting { color: var(--amber); }
+
+/* —— 成功/失败条目连条目名一起着色 —— */
+#reqLog .req-flow-item.req-flow-ok .req-ref { color: var(--green); }
+#reqLog .req-flow-item.req-flow-fail .req-ref { color: var(--red); }
+#reqLog .req-flow-item.req-flow-ok .req-ref .ic { filter: none; }
+
+/* —— 日志表格：列宽定死（fixed 布局）——
+   auto 布局下列宽由全表内容决定，展开行那条 colspan 的整段链一长就把
+   所有列撑开，Key 的 46px 等限制随之失效（max-width 在 auto 表格单元格
+   上本就不起作用）。fixed 布局用表头第一行的宽度定列，展开与否一致。 */
+#reqLog > table.led.req-led { border-collapse: collapse; width: 100%; table-layout: fixed; }
+#reqLog > table.led.req-led > thead > tr > th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--card);
+}
+#reqLog > table.led.req-led > tbody > tr { border-top: 1px solid var(--line-2); }
+/* 列宽：时间 / Agent / Key / 请求模型 / 应答供应商 / 应答模型 / 状态 /
+   输入 / 输出 / 缓存 / 首字 / 总耗时 / 速度 / 展开 */
+#reqLog > table.led.req-led > thead > tr > th:nth-child(1) { width: 64px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(2) { width: 64px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(3) { width: 46px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(4) { width: 110px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(5) { width: 104px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(6) { width: 128px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(7) { width: 60px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(8),
+#reqLog > table.led.req-led > thead > tr > th:nth-child(9),
+#reqLog > table.led.req-led > thead > tr > th:nth-child(10) { width: 54px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(11) { width: 54px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(12) { width: 62px; }
+#reqLog > table.led.req-led > thead > tr > th:nth-child(13) { width: 54px; }
+/* 展开行：整行一个单元格，内容自己换行；过长的条目在格内横向滚动，
+   不撑列 */
+#reqLog > table.led.req-led > tbody > tr.req-path-open > td { overflow: hidden; }
+#reqLog > table.led.req-led > tbody > tr.req-path-open > td > .req-flow {
+  max-width: 100%; overflow-x: auto;
+}
+
+/* Key：不带 app.css .key 的圆点/卡片，只窄显示，纯文字 */
+#reqLog .req-key {
+  font-size: 11px; color: var(--fg);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 46px;
+}
+#reqLog .req-key-none { color: var(--faint); }
+
+/* 展开三角：固定在最后一列、可见，不被宽列挤到横向滚动外 */
+#reqLog > table.led.req-led > thead > tr > th:last-child,
+#reqLog > table.led.req-led > tbody > tr > td.req-open-cell {
+  width: 22px; min-width: 22px; max-width: 22px;
+  padding: 0 2px !important;
+}
+#reqLog .req-open { display: inline-flex !important; }

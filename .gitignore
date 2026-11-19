@@ -1,0 +1,10 @@
+magpie-app.exe
+magpie-app.exe~
+magpie-bun.exe
+magpie-local.exe
+magpie-local.exe~
+data/
+rsrc_windows_amd64.syso
+dist/
+internal/update/launcher-*.com
+.redo/

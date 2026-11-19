@@ -1,0 +1,82 @@
+/* The Supplier list page (plugins/suppliers): one compact grid of rows in
+   a card — the provider and each model it serves, with the keys folded
+   away (no 识别码, no 密钥), the routing-group mark, and the context in two
+   columns: 原上下文长度 (what the upstream reported, — when it didn't)
+   beside 现上下文长度 (the window in effect). Same chrome as the Entry
+   list page; five columns instead of six. */
+#view-suppliers .row-head { margin: 14px 0 8px; padding: 0 2px; }
+#view-suppliers .row-head .note { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+#view-suppliers #suppliers { min-width: 0; }
+#view-suppliers .entry-card {
+  min-width: 0; max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+#view-suppliers .entry-card::-webkit-scrollbar { height: 9px; }
+#view-suppliers .entry-card::-webkit-scrollbar-thumb { background: var(--faint); border: 2px solid transparent; border-radius: 9px; background-clip: padding-box; }
+#view-suppliers .entry-card::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
+#view-suppliers .entry-card::-webkit-scrollbar-track { background: transparent; }
+/* every row is a grid of the same fixed columns, so they line down the
+   card; a window too narrow for all four scrolls the card sideways */
+#view-suppliers .entry-row {
+  display: grid;
+  align-items: center;
+  height: 22px;
+  border-bottom: 1px solid var(--line-2);
+}
+/* the supplier table's own columns: 组 / Provider / Model /
+   原上下文长度 / 现上下文长度 */
+#view-suppliers #suppliers .entry-row {
+  grid-template-columns: 30px 150px 180px 90px 100px;
+  min-width: 550px;
+}
+/* 组列的问号：还没有路由组收下这个模型 */
+#view-suppliers .entry-cell.c-mark span { color: var(--amber); font-weight: 600; }
+#view-suppliers .entry-row:last-child { border-bottom: 0; }
+#view-suppliers .entry-row:not(.head):hover { background: var(--pill); }
+/* a new provider's first row: a hairline across the card */
+#view-suppliers .entry-row.group-start { border-top: 1px solid var(--line); }
+#view-suppliers .entry-row.head {
+  height: 26px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+#view-suppliers .entry-cell {
+  min-width: 0; padding: 0 7px;
+  font-size: 11px; color: var(--fg); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#view-suppliers .entry-row.head .entry-cell {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+}
+#view-suppliers .entry-cell.c-prov { display: flex; align-items: center; justify-content: center; gap: 5px; }
+#view-suppliers .entry-cell.c-prov .ic { width: 12px; height: 12px; flex: none; }
+#view-suppliers .entry-cell.c-prov span { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--fg-2); }
+#view-suppliers .entry-cell.c-ctx-raw span { font-variant-numeric: tabular-nums; color: var(--muted); }
+#view-suppliers .entry-cell.c-ctx { padding: 0 4px; }
+/* 现上下文长度：一个可编辑的小框，单位 K，用户设过的用强调色 */
+#view-suppliers .sp-ctx-box { display: inline-flex; align-items: center; gap: 2px; justify-content: center; }
+#view-suppliers input.sp-ctx {
+  width: 52px; height: 18px; padding: 0 3px;
+  border: 1px solid transparent; border-radius: 5px;
+  background: transparent; color: var(--fg);
+  font: inherit; font-size: 11px; text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+#view-suppliers input.sp-ctx:hover { border-color: var(--line); background: var(--pill); }
+#view-suppliers input.sp-ctx:focus { border-color: var(--accent); background: var(--card); outline: none; }
+/* 上游能拉到窗口的：锁定，只读不编辑 */
+#view-suppliers input.sp-ctx.locked { color: var(--fg); cursor: default; }
+#view-suppliers input.sp-ctx.locked:hover,
+#view-suppliers input.sp-ctx.locked:focus { border-color: transparent; background: transparent; }
+/* 上游拉不到：默认 200K 灰，用户设的其他值绿 */
+#view-suppliers input.sp-ctx.plain200 { color: var(--muted); }
+#view-suppliers input.sp-ctx.custom { color: var(--green); font-weight: 600; }
+#view-suppliers input.sp-ctx:disabled { opacity: .6; }
+#view-suppliers .sp-ctx-k { font-size: 10px; color: var(--muted); }
+#view-suppliers .entry-sk-name { width: 120px; height: 10px; }
+#view-suppliers .entry-sk-bar { width: 76px; height: 12px; }

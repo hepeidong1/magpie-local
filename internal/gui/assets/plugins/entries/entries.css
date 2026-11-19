@@ -1,0 +1,63 @@
+/* The Provider list page (plugins/entries): one compact grid of rows
+   in a card — what the entry is (provider, model, key), what its model can
+   take (context), its own 6-character code and how many requests it has
+   out at once — grouped provider first, then model, then key. */
+#view-entries .row-head { margin: 14px 0 8px; padding: 0 2px; }
+#view-entries .row-head .note { font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums; }
+#view-entries #entries { min-width: 0; }
+#view-entries .entry-card {
+  min-width: 0; max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain;
+}
+#view-entries .entry-card::-webkit-scrollbar { height: 9px; }
+#view-entries .entry-card::-webkit-scrollbar-thumb { background: var(--faint); border: 2px solid transparent; border-radius: 9px; background-clip: padding-box; }
+#view-entries .entry-card::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
+#view-entries .entry-card::-webkit-scrollbar-track { background: transparent; }
+/* every row is a grid of the same fixed columns, so they line down the
+   card; a window too narrow for all five scrolls the card sideways, as
+   the Usage ledger does, rather than cutting the last one off */
+#view-entries .entry-row {
+  display: grid;
+  align-items: center;
+  height: 22px;
+  border-bottom: 1px solid var(--line-2);
+}
+/* the entries table's own columns */
+#view-entries #entries .entry-row {
+  grid-template-columns: 30px 66px 150px 140px 130px 80px;
+  min-width: 596px;
+}
+/* 组列的问号：还没有路由组收下这个条目 */
+#view-entries .entry-cell.c-mark span { color: var(--amber); font-weight: 600; }
+#view-entries .entry-row:last-child { border-bottom: 0; }
+#view-entries .entry-row:not(.head):hover { background: var(--pill); }
+/* a new provider's first row: a hairline across the card */
+#view-entries .entry-row.group-start { border-top: 1px solid var(--line); }
+#view-entries .entry-row.head {
+  height: 26px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+#view-entries .entry-cell {
+  min-width: 0; padding: 0 7px;
+  font-size: 11px; color: var(--fg); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#view-entries .entry-row.head .entry-cell {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+}
+#view-entries .entry-cell.c-prov { display: flex; align-items: center; justify-content: center; gap: 5px; }
+#view-entries .entry-cell.c-prov .ic { width: 12px; height: 12px; flex: none; }
+#view-entries .entry-cell.c-prov span { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--fg-2); }
+#view-entries .entry-cell.c-key span { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 10.5px; color: var(--muted); }
+#view-entries .entry-cell.c-ctx span { font-variant-numeric: tabular-nums; color: var(--fg-2); }
+#view-entries .entry-cell.c-key span { color: var(--fg-2); }
+/* the entry's own 6-character code, a mono whisper beside the key */
+#view-entries .entry-cell.c-code span { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 10px; letter-spacing: .04em; color: var(--faint); }
+#view-entries .entry-sk-name { width: 120px; height: 10px; }
+#view-entries .entry-sk-bar { width: 76px; height: 12px; }
